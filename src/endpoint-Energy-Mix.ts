@@ -19,7 +19,6 @@ export function categorizeByDay(input: GenerationDate[]): EnergyMixResult[] {
     const result: EnergyMixResult[] = [];
 
     for (const a of input) {
-
         const date = a.from.slice(0, 10);
 
         if (!days[date]) {
@@ -29,24 +28,31 @@ export function categorizeByDay(input: GenerationDate[]): EnergyMixResult[] {
         days[date].push(...a.generationmix);
     }
 
-
     for (const date in days) {
+        const dayMix = days[date];
+        if (!dayMix) continue; // zabezpieczenie - w praktyce zawsze istnieje, ale TS tego nie wie
+
         const stats: Record<string, { sum: number; count: number }> = {};
         const averageMix: Record<string, number> = {};
         let cleanEnergyPercentage = 0;
 
-        for (const mix of days[date]) {
+        for (const mix of dayMix) {
             if (!stats[mix.fuel]) {
                 stats[mix.fuel] = { sum: 0, count: 0 };
             }
 
-            stats[mix.fuel].sum += mix.perc;
-            stats[mix.fuel].count++;
+            const fuelStats = stats[mix.fuel];
+            if (!fuelStats) continue; // zabezpieczenie
+
+            fuelStats.sum += mix.perc;
+            fuelStats.count++;
         }
 
-
         for (const fuel in stats) {
-            averageMix[fuel] = Number((stats[fuel].sum / stats[fuel].count).toFixed(1));
+            const fuelStats = stats[fuel];
+            if (!fuelStats) continue;
+
+            averageMix[fuel] = Number((fuelStats.sum / fuelStats.count).toFixed(1));
         }
 
         for (const fuel of cleanEnergySources) {
@@ -55,6 +61,7 @@ export function categorizeByDay(input: GenerationDate[]): EnergyMixResult[] {
 
         result.push({ date, averageMix, cleanEnergyPercentage });
     }
+
     return result;
 }
 

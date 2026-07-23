@@ -36,8 +36,13 @@ export function toWindowResults(intervals: GenerationDate[], hours: number): Opt
 
     for (let i = 0; i + time <= buff.length; i++) {
         const buffer: OptimalChargeResult[] = buff.slice(i, time + i);
-        const start: string = buffer[0].from;
-        const end: string = buffer[time - 1].to;
+
+        const first = buffer[0];
+        const last = buffer[time - 1];
+        if (!first || !last) continue; // zabezpieczenie - w praktyce zawsze istnieją przy poprawnym slice
+
+        const start: string = first.from;
+        const end: string = last.to;
         let avg: number = 0;
 
         for (const j of buffer) {
