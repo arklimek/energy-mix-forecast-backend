@@ -1,0 +1,31 @@
+{
+  "name": "energy-mix-forecast-backend",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'tsx src/index.ts'",
+    "start": "tsx src/index.ts"
+  },
+  "keywords": [],
+  "author": "Arkadiusz Klimek",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.1.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^26.1.1",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.0"
+  },
+  "dependencies": {
+    "@temporalio/activity": "^1.20.3",
+    "@temporalio/client": "^1.20.3",
+    "@temporalio/worker": "^1.20.3",
+    "@temporalio/workflow": "^1.20.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}
+
