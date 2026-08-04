@@ -29,7 +29,7 @@ export interface OptimalChargeResult {
 export const cleanEnergySources = ['biomass', 'nuclear', 'hydro', 'wind', 'solar'];
 
 export async function fetchGenerationMix(from: string, to: string): Promise<GenerationDate[]> {
-    const api = await fetch(`https://api.carbonintensity.org.uk/generation/${from}/${to}`);
+    const api = await fetch(`https://api.carbonintensity.org.uk/generation/${from}/${to}`, { signal: AbortSignal.timeout(5000) });
 
     if (!api.ok) {
         throw new Error(`Error code: ${api.status}`);

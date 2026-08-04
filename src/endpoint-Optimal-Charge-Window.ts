@@ -39,7 +39,7 @@ export function toWindowResults(intervals: GenerationDate[], hours: number): Opt
 
         const first = buffer[0];
         const last = buffer[time - 1];
-        if (!first || !last) continue; // zabezpieczenie - w praktyce zawsze istnieją przy poprawnym slice
+        if (!first || !last) continue;
 
         const start: string = first.from;
         const end: string = last.to;
@@ -61,9 +61,9 @@ export function toWindowResults(intervals: GenerationDate[], hours: number): Opt
     }
 
     if (!best) {
-        throw new Error('Za mało danych, żeby znaleźć okno o takiej długości');
+        throw new Error('Not enough data to find a window of such length');
     }
-    console.log(best);
+
     return best;
 }
 
@@ -73,21 +73,21 @@ optimalWindowRouter.get('/api/optimal-window', async (req, res) => {
     const hours = Number(req.query.hours);
 
     if (!Number.isInteger(hours) || hours < 1 || hours > 6) {
-        res.status(400).json({ error: 'Parametr "hours" musi być liczbą całkowitą 1-6' });
+        res.status(400).json({ error: 'Parameter "hours" must be an integer between 1 and 6' });
         return;
     }
 
     try {
-        const jutro = addDays(new Date(), 1);
-        const pojutrze = addDays(jutro, 1);
+        const tommorow = addDays(new Date(), 1);
+        const dayafter = addDays(tommorow, 1);
 
-        const intervals = await fetchGenerationMix(formatDate(jutro), formatDate(pojutrze));
+        const intervals = await fetchGenerationMix(formatDate(tommorow), formatDate(dayafter));
         const result = toWindowResults(intervals, hours);
 
         res.json(result);
     }
 
     catch (err) {
-        res.status(502).json({ error: 'Nie udało się obliczyć optymalnego okna' });
+        res.status(502).json({ error: 'Could not calculate optimal window' });
     }
 });

@@ -30,7 +30,7 @@ export function categorizeByDay(input: GenerationDate[]): EnergyMixResult[] {
 
     for (const date in days) {
         const dayMix = days[date];
-        if (!dayMix) continue; // zabezpieczenie - w praktyce zawsze istnieje, ale TS tego nie wie
+        if (!dayMix) continue;
 
         const stats: Record<string, { sum: number; count: number }> = {};
         const averageMix: Record<string, number> = {};
@@ -42,7 +42,7 @@ export function categorizeByDay(input: GenerationDate[]): EnergyMixResult[] {
             }
 
             const fuelStats = stats[mix.fuel];
-            if (!fuelStats) continue; // zabezpieczenie
+            if (!fuelStats) continue;
 
             fuelStats.sum += mix.perc;
             fuelStats.count++;
@@ -69,15 +69,14 @@ export const generationMixRouter = Router();
 
 generationMixRouter.get('/api/generation-mix', async (_req, res) => {
     try {
-        const dzisiaj = addDays(new Date(), 0);
-        const koniec = addDays(dzisiaj, 2);
+        const today = addDays(new Date(), 0);
+        const endday = addDays(today, 2);
 
-        const intervals = await fetchGenerationMix(formatDate(dzisiaj), formatDate(koniec));
+        const intervals = await fetchGenerationMix(formatDate(today), formatDate(endday));
         const days = categorizeByDay(intervals);
-
         res.json({ days });
     }
     catch (err) {
-        res.status(502).json({ error: 'Nie udało się pobrać danych z zewnętrznego API' });
+        res.status(502).json({ error: 'Could not fetch data from external API' });
     }
 });
